@@ -1,70 +1,113 @@
-# Getting Started with Create React App
+# Chrome Extension Webpack Boilerplate
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A basic foundation boilerplate for rich Chrome Extensions using [Webpack](https://webpack.github.io/) to help you write modular and modern Javascript code, load CSS easily and [automatic reload the browser on code changes](https://webpack.github.io/docs/webpack-dev-server.html#automatic-refresh).
 
-## Available Scripts
+## Developing a new extension
+_I'll assume that you already read the [Webpack docs](https://webpack.github.io/docs) and the [Chrome Extension](https://developer.chrome.com/extensions/getstarted) docs._
 
-In the project directory, you can run:
 
-### `npm start`
+1. Check if your Node.js version is >= 6.
+2. Clone the repository.
+3. Install [yarn](https://yarnpkg.com/lang/en/docs/install/).
+4. Run `yarn`.
+5. Change the package's name and description on `package.json`.
+6. Change the name of your extension on `src/manifest.json`.
+7. Run `npm run start`
+8. Load your extension on Chrome following:
+    1. Access `chrome://extensions/`
+    2. Check `Developer mode`
+    3. Click on `Load unpacked extension`
+    4. Select the `build` folder.
+8. Have fun.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## Structure
+All your extension's development code must be placed in `src` folder, including the extension manifest.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+The boilerplate is already prepared to have a popup, a options page and a background page. You can easily customize this.
 
-### `npm test`
+Each page has its own [assets package defined](https://github.com/samuelsimoes/chrome-extension-webpack-boilerplate/blob/master/webpack.config.js#L16-L20). So, to code on popup you must start your code on `src/js/popup.js`, for example.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+You must use the [ES6 modules](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/import) to a better code organization. The boilerplate is already prepared to that and [here you have a little example](https://github.com/samuelsimoes/chrome-extension-webpack-boilerplate/blob/master/src/js/popup.js#L2-L4).
 
-### `npm run build`
+## Webpack auto-reload and HRM
+To make your workflow much more efficient this boilerplate uses the [webpack server](https://webpack.github.io/docs/webpack-dev-server.html) to development (started with `npm run server`) with auto reload feature that reloads the browser automatically every time that you save some file o your editor.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+You can run the dev mode on other port if you want. Just specify the env var `port` like this:
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+```
+$ PORT=6002 npm run start
+```
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## Content Scripts
 
-### `npm run eject`
+Although this boilerplate uses the webpack dev server, it's also prepared to write all your bundles files on the disk at every code change, so you can point, on your extension manifest, to your bundles that you want to use as [content scripts](https://developer.chrome.com/extensions/content_scripts), but you need to exclude these entry points from hot reloading [(why?)](https://github.com/samuelsimoes/chrome-extension-webpack-boilerplate/issues/4#issuecomment-261788690). To do so you need to expose which entry points are content scripts on the `webpack.config.js` using the `chromeExtensionBoilerplate -> notHotReload` config. Look the example below.
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+Let's say that you want use the `myContentScript` entry point as content script, so on your `webpack.config.js` you will configure the entry point and exclude it from hot reloading, like this:
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+```js
+{
+  …
+  entry: {
+    myContentScript: "./src/js/myContentScript.js"
+  },
+  chromeExtensionBoilerplate: {
+    notHotReload: ["myContentScript"]
+  }
+  …
+}
+```
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+and on your `src/manifest.json`:
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+```json
+{
+  "content_scripts": [
+    {
+      "matches": ["https://www.google.com/*"],
+      "js": ["myContentScript.bundle.js"]
+    }
+  ]
+}
 
-## Learn More
+```
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+## Packing
+After the development of your extension run the command
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+```
+$ NODE_ENV=production npm run build
+```
+Now, the content of `build` folder will be the extension ready to be submitted to the Chrome Web Store. Just take a look at the [official guide](https://developer.chrome.com/webstore/publish) to more infos about publishing.
 
-### Code Splitting
+## Secrets
+If you are developing an extension that talks with some API you probably are using different keys for testing and production. Is a good practice you not commit your secret keys and expose to anyone that have access to the repository.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+To this task this boilerplate import the file `./secrets.<THE-NODE_ENV>.js` on your modules through the module named as `secrets`, so you can do things like this:
 
-### Analyzing the Bundle Size
+_./secrets.development.js_
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+```js
+export default { key: "123" };
+```
 
-### Making a Progressive Web App
+_./src/popup.js_
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+```js
+import secrets from "secrets";
+ApiCall({ key: secrets.key });
+```
+:point_right: The files with name `secrets.*.js` already are ignored on the repository.
 
-### Advanced Configuration
+## With React.js
+:bulb: If you want use [React.js](https://facebook.github.io/react/) with this boilerplate, check the **[react branch](https://github.com/samuelsimoes/chrome-extension-webpack-boilerplate/tree/react)**.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
 
-### Deployment
+## Contributing
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+1. **Please!! Do not create a pull request without an issue before discussing the problem.**
+2. On your PR make sure that you are following the current codebase style.
+3. Your PR must be single purpose. Resolve just one problem on your PR.
+4. Make sure to commit in the same style that we are committing until now on the project.
 
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+-------------
+Samuel Simões ~ [@samuelsimoes](https://twitter.com/samuelsimoes) ~ [Blog](http://blog.samuelsimoes.com/)
