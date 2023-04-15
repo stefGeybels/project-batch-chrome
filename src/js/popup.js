@@ -1,9 +1,9 @@
 import '../style.css'
-import Login from "./popup/login/Login";
+import App from './application/App';
 import React from "react";
 import { render } from "react-dom";
 
 render(
- <Login />,
+  <App />,
   window.document.getElementById("app-container")
 );
