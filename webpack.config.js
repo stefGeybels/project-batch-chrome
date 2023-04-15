@@ -32,23 +32,23 @@ var options = {
   module: {
     rules: [
       {
-        test: /\.css$/,
-        loader: "style-loader!css-loader",
-        exclude: /node_modules/
+        test: /\.css$/i,
+        include: path.resolve(__dirname, 'src'),
+        use: ['style-loader', 'css-loader', 'postcss-loader'],
       },
       {
         test: new RegExp('\.(' + fileExtensions.join('|') + ')$'),
-        loader: "file-loader?name=[name].[ext]",
+        use: ["file-loader?name=[name].[ext]"],
         exclude: /node_modules/
       },
       {
         test: /\.html$/,
-        loader: "html-loader",
+        use: ["html-loader"],
         exclude: /node_modules/
       },
       {
         test: /\.(js|jsx)$/,
-        loader: "babel-loader",
+        use: ["babel-loader"],
         exclude: /node_modules/
       }
     ]
@@ -62,7 +62,8 @@ var options = {
     new CleanWebpackPlugin(),
     // expose and write the allowed env vars on the compiled bundle
     new webpack.EnvironmentPlugin(["NODE_ENV"]),
-    new CopyWebpackPlugin([{
+    new CopyWebpackPlugin({
+      patterns: [{
       from: "src/manifest.json",
       transform: function (content, path) {
         // generates the manifest file using the package.json informations
@@ -72,7 +73,7 @@ var options = {
           ...JSON.parse(content.toString())
         }))
       }
-    }]),
+    }]}),
     new HtmlWebpackPlugin({
       template: path.join(__dirname, "src", "popup.html"),
       filename: "popup.html",
@@ -89,10 +90,9 @@ var options = {
       chunks: ["background"]
     }),
     new WriteFilePlugin()
-  ]
+  ],
+  devtool: "cheap-module-source-map",
 };
-
-options.devtool = "cheap-module-source-map";
 
 if (env.NODE_ENV === "development") {
   options.devtool = "cheap-module-source-map";
