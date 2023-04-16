@@ -11,23 +11,21 @@ export default function App() {
         chrome.storage.local.get(['user'], function(data) {
             if (data.user) {
                 const newUser = new User();
-                newUser.addToken(data.user);
+                newUser.addEmail(data.user.email);
+                newUser.addCompany(data.user.company);
+                newUser.addToken(data.user.token);
                 setUser(newUser);
             }
         });
     }, []);
 
     if (user.isAuthenticated()) {
-        return <Dashboard />
+        return <Dashboard userData={user}/>
     }
 
     const loginAttempt = (userData) => {
-        const newUser = new User();
-        newUser.addToken("sdkjfhsk");
-        newUser.addEmail(userData.email);
-        newUser.addCompany(userData.company);
-        setUser(newUser);
-        chrome.storage.local.set({ user: newUser.getUser() });
+        setUser(userData);
+        chrome.storage.local.set({ user: userData.getUser() });
     }
 
     return <Login loginAttempt={loginAttempt}/>
