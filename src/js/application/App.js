@@ -11,7 +11,7 @@ export default function App() {
         chrome.storage.local.get(['user'], function(data) {
             if (data.user) {
                 const newUser = new User();
-                newUser.setUserFromStorage(data.user);
+                newUser.setUserFromStorage(data.user); 
                 setUser(newUser);
             }
         });
