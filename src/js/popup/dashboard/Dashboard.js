@@ -4,7 +4,7 @@ import AuthenticatedUser from "../../authentication/User";
 export default function Dashboard() {
     return (
         <div>
-            <h1>{AuthenticatedUser.getUser().email}</h1>
+            <h1>Dashboard</h1>
         </div>
     )
 }
