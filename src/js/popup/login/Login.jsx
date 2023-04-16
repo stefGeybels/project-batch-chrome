@@ -2,6 +2,10 @@ import React from "react"
 import { User } from "../../authentication/User"
 
 export default function Login({loginAttempt}) {
+    const user = new User()
+    user.addToken('1234567890')
+    user.addEmail('ste@test.be')
+    user.addCompany('Test company')
 
     return (
       <>
@@ -61,7 +65,7 @@ export default function Login({loginAttempt}) {
                 <div>
                   <button
                     className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                    onClick={() => loginAttempt('1234567890')}
+                    onClick={() => loginAttempt(user)}
                   >
                     Register
                   </button>
