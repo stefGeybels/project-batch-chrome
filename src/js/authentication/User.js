@@ -1,40 +1,41 @@
 import React from "react";
-import { useState } from "react";
 
-export default function AuthenticatedUser() {
-    const [email, setEmail] = useState("");
-    const [company, setCompany] = useState("");
-    const [token, setToken] = useState("");
-
-    function addEmail(newEmail) {
-        setEmail(newEmail);
+export class User{
+    constructor() {
+        this.email = "";
+        this.company = "";
+        this.token = "";
     }
 
-    function addCompany(newCompany) {
-        setCompany(newCompany);
+    addEmail(newEmail) {
+        this.email = newEmail;
     }
 
-    function addToken(newToken) {
-        setToken(newToken);
+    addCompany(newCompany) {
+        this.company = newCompany;
     }
 
-    function isAuthenticated() {
-        if (token === "") {
+    addToken(newToken) {
+        this.token = newToken;
+    }
+
+    isAuthenticated() {
+        if (this.token === "") {
             return false;
         }
 
         return true
     }
 
-    function getToken(){
-        return token;
+    getToken(){
+        return this.token;
     }
 
-    function getUser() {
+    getUser() {
         return {
-            email: email,
-            company: company,
-            token: token
+            email: this.email,
+            company: this.company,
+            token: this.token
         }
     }
 }

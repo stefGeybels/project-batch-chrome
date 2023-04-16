@@ -1,6 +1,12 @@
 import React from "react"
+import { User } from "../../authentication/User"
 
-export default function Login() {
+export default function Login({loginAttempt}) {
+    const user = new User()
+    user.addToken('1234567890')
+    user.addEmail('ste@test.be')
+    user.addCompany('Test company')
+
     return (
       <>
         <div className="flex flex-col justify-center py-12 sm:px-6 lg:px-8">
@@ -58,8 +64,8 @@ export default function Login() {
   
                 <div>
                   <button
-                    type="submit"
                     className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                    onClick={() => loginAttempt(user)}
                   >
                     Register
                   </button>
