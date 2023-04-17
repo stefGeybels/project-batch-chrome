@@ -1,30 +1,33 @@
 import React, { useState } from "react"
 import { User } from "../../authentication/User"
 import axios from "axios"
+import data from "../../variables.json"
 
 export default function Login({loginAttempt}) {
     const [email, setEmail] = useState('')
     const [companySecret, setCompanySecret] = useState('')
+    const [company, setCompany] = useState('')
+    const [errors, setError] = useState('')
 
     const user = new User()
-    user.addToken('1234567890')
-    user.addEmail('ste@test.be')
-    user.addCompany('Test company')
 
     function login(e) {
-        e.preventDefault()
+      console.log('start of function')
+        e.prevenDefault
         //possible need ngrok to test this functionality
-        axios.post('http://localhost:3000/api/v1/register-extension', {
+        axios.post( data.url + '/api/v1/extension-registration', {
             email: email,
-            companySecret: companySecret
+            company: company,
+            passphrase: companySecret
         }).then((response) => {
             user.addToken(response.data.token)
             user.addEmail(email)
             user.addCompany(response.data.company)
             loginAttempt(user)
         }).catch((error) => {
-            console.log(error)
+          console.log(error)
         })
+        console.log('test')
     }
 
     return (
@@ -36,12 +39,12 @@ export default function Login({loginAttempt}) {
               src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
               alt="Your Company"
             /> */}
-            <h2 className="mt-6 text-center text-3xl font-bold tracking-tight text-gray-900">Connect your plugin to your company</h2>
+            <h2 className="mt-6 text-center text-3xl font-bold tracking-tight text-gray-900">Connect your plugin to your company<p>{errors}</p></h2>
           </div>
-  
+            
           <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
             <div className="bg-white px-4 py-8 shadow sm:rounded-lg sm:px-10">
-              <form className="space-y-6" action="#" method="POST">
+              <div className="space-y-6">
                 <div>
                   <label htmlFor="email" className="block text-sm font-medium leading-6 text-gray-900">
                     Email address
@@ -56,6 +59,23 @@ export default function Login({loginAttempt}) {
                       className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                       value={email}
                       onChange={e => setEmail(e.target.value)}
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label htmlFor="email" className="block text-sm font-medium leading-6 text-gray-900">
+                    Company name
+                  </label>
+                  <div className="mt-2">
+                    <input
+                      id="company"
+                      name="company"
+                      type="text"
+                      required
+                      className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                      value={company}
+                      onChange={e => setCompany(e.target.value)}
                     />
                   </div>
                 </div>
@@ -89,12 +109,12 @@ export default function Login({loginAttempt}) {
                 <div>
                   <button
                     className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                    onClick={() => login(user)}
+                    onClick={(e) => login(e)}
                   >
                     Register
                   </button>
                 </div>
-              </form>
+              </div>
 
             </div>
           </div>
