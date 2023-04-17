@@ -12,9 +12,7 @@ export default function Login({loginAttempt}) {
     const user = new User()
 
     function login(e) {
-      console.log('start of function')
         e.prevenDefault
-        //possible need ngrok to test this functionality
         axios.post( data.url + '/api/v1/extension-registration', {
             email: email,
             company: company,
@@ -27,7 +25,6 @@ export default function Login({loginAttempt}) {
         }).catch((error) => {
           console.log(error)
         })
-        console.log('test')
     }
 
     return (
