@@ -25,7 +25,6 @@ export default function Login({loginAttempt}) {
             user.addCompany(response.data.company)
             loginAttempt(user)
         }).catch((exception) => {
-          console.log(exception)
           setError(exception.response.data.message)
         })
     }
