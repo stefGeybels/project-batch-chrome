@@ -2,17 +2,19 @@ import React, { useState } from "react"
 import { User } from "../../authentication/User"
 import axios from "axios"
 import data from "../../variables.json"
+import ApiError from "../../errors/BadApiResponse"
 
 export default function Login({loginAttempt}) {
     const [email, setEmail] = useState('')
     const [companySecret, setCompanySecret] = useState('')
     const [company, setCompany] = useState('')
-    const [errors, setError] = useState('')
+    const [error, setError] = useState('')
 
     const user = new User()
 
     function login(e) {
         e.prevenDefault
+        setError('')
         axios.post( data.url + '/api/v1/extension-registration', {
             email: email,
             company: company,
@@ -22,8 +24,8 @@ export default function Login({loginAttempt}) {
             user.addEmail(email)
             user.addCompany(response.data.company)
             loginAttempt(user)
-        }).catch((error) => {
-          console.log(error)
+        }).catch((exception) => {
+          setError(exception.response.data.message)
         })
     }
 
@@ -36,8 +38,13 @@ export default function Login({loginAttempt}) {
               src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
               alt="Your Company"
             /> */}
-            <h2 className="mt-6 text-center text-3xl font-bold tracking-tight text-gray-900">Connect your plugin to your company<p>{errors}</p></h2>
+            <h2 className="mt-6 text-center text-3xl font-bold tracking-tight text-gray-900">Connect your plugin to your company</h2>
           </div>
+
+          {
+            (error !== '') ?  <ApiError message={error} />
+              : <div></div>
+          }
             
           <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
             <div className="bg-white px-4 py-8 shadow sm:rounded-lg sm:px-10">
