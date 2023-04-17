@@ -19,6 +19,12 @@ export class User{
         this.token = newToken;
     }
 
+    setUserFromStorage(user) {
+        this.email = user.email;
+        this.company = user.company;
+        this.token = user.token;
+    }
+
     isAuthenticated() {
         if (this.token === "") {
             return false;
