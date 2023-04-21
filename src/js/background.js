@@ -24,14 +24,18 @@ chrome.webNavigation.onCommitted.addListener((details) => {
   newUrl = parser.findBaseUrl(details.url)
 
   if(urlsToTrack.includes(newUrl)){
-    console.log('before if : ' + newUrl, 'monitor url : ' + monitorUrl)
-    if(parser.findDomain(newUrl) !== parser.findDomain(monitorUrl) && monitorUrl != null){
-      // const totalTime = Math.round((Date.now() - startTime) / 60000);
-      // request.sendPageVisit(totalTime, monitorUrl)
-      // startTime = Date.now();
-      console.log('monitor url: ' + monitorUrl)
+    if(startTime == null){
+      startTime = new Date();
     }
-    console.log('after if')
+
+    console.log('before if : ' + newUrl, 'monitor url : ' + monitorUrl)
+
+    if(parser.findDomain(newUrl) !== parser.findDomain(monitorUrl) && monitorUrl != null){
+      const totalTime = Math.round((new Date() - startTime) / 1000);
+      console.log('time spend on site: ' + totalTime)
+      // request.sendPageVisit(totalTime, monitorUrl)
+      startTime = new Date();
+    }
     monitorUrl = newUrl;
   }
 
