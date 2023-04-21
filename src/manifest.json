@@ -17,6 +17,7 @@
   "manifest_version": 3,
   "permissions" : [
     "storage",
-    "webNavigation"
+    "webNavigation",
+    "tabs"
   ]
 }
