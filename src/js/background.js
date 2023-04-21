@@ -1,65 +1,81 @@
 import data from './variables.json'
 import { urlParser } from './helpers/parseUrl';
 import axios from 'axios';
+import { PageVisit } from './helpers/pageVisited';
 
 const urlsToTrack = [
-  "https://www.google.be"
+  "https://www.google.be",
+  "https://www.facebook.com"
 ];
 
 // Define a variable to store the start time of the user's visit
 let startTime = null;
 let parser = new urlParser();
+let request = new PageVisit();
 
 console.log('startup background worker');
 
 let monitorUrl = null;
 let changeUrl = null;
+let newUrl = null;
 
-// // Listen for when the user navigates to a new page
-// chrome.webNavigation.onCommitted.addListener((details) => {
-//   // Check if the new page is one of the URLs we want to track
-//   console.log('before if')
-//   monitorUrl = parser.findBaseUrl(details.url);
-//   if (urlsToTrack.includes(monitorUrl)) {
-//     // Record the start time of the user's visit
-//     console.log('starts timer');
-//     startTime = Date.now();
-//     console.log('this is the monitor url' + monitorUrl)
-//   }
-// });
+// Listen for when the user navigates to a new page
+chrome.webNavigation.onCommitted.addListener((details) => {
+  newUrl = parser.findBaseUrl(details.url)
+
+  if(urlsToTrack.includes(newUrl)){
+    console.log('before if : ' + newUrl, 'monitor url : ' + monitorUrl)
+    if(parser.findDomain(newUrl) !== parser.findDomain(monitorUrl) && monitorUrl != null){
+      // const totalTime = Math.round((Date.now() - startTime) / 60000);
+      // request.sendPageVisit(totalTime, monitorUrl)
+      // startTime = Date.now();
+      console.log('monitor url: ' + monitorUrl)
+    }
+    console.log('after if')
+    monitorUrl = newUrl;
+  }
+
+});
 
 // Listen for when the user navigates away from a tracked page
 chrome.webNavigation.onCompleted.addListener((details) => {
-  console.log('enters the event')
-  // Check if the page the user left is one of the URLs we want to track
-  // console.log('moves to other page')
-  if (!urlsToTrack.includes(details.url) && monitorUrl !== null) {
-    chrome.tabs.query({active: true, currentWindow: true}, tabs => {
-      changeUrl = parser.findBaseUrl(tabs[0].url)
-    })
+  // chrome.tabs.query({active: true, currentWindow: true}, tabs => {
+  //   newUrl = parser.findBaseUrl(tabs[0].url)
+  // })
 
-    // console.log(parser.findDomain(monitorUrl) + ' ' + parser.findDomain(changeUrl))
+  // if(urlsToTrack.includes(newUrl)){
+  //   console.log('before if: ' + newUrl, 'monitor url: ' + monitorUrl)
+  //   if(parser.findDomain(newUrl) !== parser.findDomain(monitorUrl)){
+  //     // const totalTime = Math.round((Date.now() - startTime) / 60000);
+  //     // request.sendPageVisit(totalTime, monitorUrl)
+  //     // startTime = Date.now();
+  //     console.log(monitorUrl)
+  //   }
+  //   monitorUrl = newUrl;
+  // }
 
-    if(parser.findDomain(monitorUrl) !== parser.findDomain(changeUrl))
-    {
-        // Calculate the total time the user spent on the page
-        // console.log('prepares request')
-        const totalTime = Math.round((Date.now() - startTime) / 60000);
 
-        // Send a POST request to the API with the total time and page URL
-        // console.log('sends request with total time: ' + totalTime)
-        // axios.post(data.url + '/test', {
-        //   totalTime,
-        //   pageUrl: details.url
-        // })
-        //   .then(response => {
-        //     console.log("API post request sent successfully.");
-        //   })
-        //   .catch(error => {
-        //     console.error("Error sending API post request:", error);
-        //   });
-        changeUrl = null;
-        monitorUrl = null;
-    }
-  }
+  // if (!urlsToTrack.includes(details.url) && monitorUrl !== null) {
+  //   chrome.tabs.query({active: true, currentWindow: true}, tabs => {
+  //     changeUrl = parser.findBaseUrl(tabs[0].url)
+  //   })
+
+  //   if(parser.findDomain(monitorUrl) !== parser.findDomain(changeUrl))
+  //   {
+  //       const totalTime = Math.round((Date.now() - startTime) / 60000);
+
+  //       // axios.post(data.url + '/test', {
+  //       //   totalTime,
+  //       //   pageUrl: details.url
+  //       // })
+  //       //   .then(response => {
+  //       //     console.log("API post request sent successfully.");
+  //       //   })
+  //       //   .catch(error => {
+  //       //     console.error("Error sending API post request:", error);
+  //       //   });
+  //       changeUrl = null;
+  //       monitorUrl = null;
+  //   }
+  // }
 });
