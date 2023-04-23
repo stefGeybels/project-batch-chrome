@@ -1,5 +1,6 @@
 {
   "name": "Project-batch",
+  "version": "0.1.0",
   "options_page": "options.html",
   "background": {
     "service_worker": "background.bundle.js",
@@ -16,6 +17,8 @@
   },
   "manifest_version": 3,
   "permissions" : [
-    "storage"
+    "storage",
+    "webNavigation",
+    "tabs"
   ]
 }
