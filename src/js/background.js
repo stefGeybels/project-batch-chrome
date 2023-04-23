@@ -44,6 +44,7 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
   
       if(!urlsToTrack.includes(currentUrl))
       {
+        console.log('enterd wierd if')
         startTime = null;
       }
       return;
