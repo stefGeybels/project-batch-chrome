@@ -16,15 +16,7 @@ let request = new PageVisit();
 console.log('startup background worker');
 
 let monitorUrl = null;
-let changeUrl = null;
 let currentUrl = null;
-
-async function getUrl(){
-  chrome.tabs.query({active: true, currentWindow: true}, tabs => {
-    currentUrl = parser.findBaseUrl(tabs[0].url)
-    return;
-  })
-}
 
 chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
   chrome.tabs.query({active: true, currentWindow: true}, function (tabs) {
