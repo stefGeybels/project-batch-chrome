@@ -29,7 +29,7 @@ async function getUrl(){
 chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
   chrome.tabs.query({active: true, currentWindow: true}, function (tabs) {
     currentUrl = parser.findBaseUrl(tabs[0].url)
-    
+
     if(urlsToTrack.includes(currentUrl)){
       if(startTime == null){
         startTime = new Date();
@@ -54,52 +54,15 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
       {
         startTime = null;
       }
-      // console.log('tracked url')
       return;
     }
     
     if(urlsToTrack.includes(monitorUrl) && monitorUrl !== null){
       const totalTime = Math.round((new Date() - startTime) / 1000);
       console.log('time spend on site: ' + totalTime + ' - website: ' + monitorUrl)
-      // request.sendPageVisit(totalTime, monitorUrl)
+
       monitorUrl = null;
       startTime = null;
     }
   })
-
-  if(urlsToTrack.includes(currentUrl)){
-    if(startTime == null){
-      startTime = new Date();
-      return;
-    }
-
-    if(monitorUrl === null) 
-    {
-      monitorUrl = currentUrl
-      return;
-    }
-
-    if(parser.findDomain(currentUrl) !== parser.findDomain(monitorUrl)){
-      const totalTime = Math.round((new Date() - startTime) / 1000);
-      console.log('time spend on site: ' + totalTime + ' - website: ' + monitorUrl)
-      // request.sendPageVisit(totalTime, monitorUrl)
-      startTime = new Date();
-    }
-    monitorUrl = currentUrl;
-
-    if(!urlsToTrack.includes(currentUrl))
-    {
-      startTime = null;
-    }
-    // console.log('tracked url')
-    return;
-  }
-  
-  if(urlsToTrack.includes(monitorUrl) && monitorUrl !== null){
-    const totalTime = Math.round((new Date() - startTime) / 1000);
-    console.log('time spend on site: ' + totalTime + ' - website: ' + monitorUrl)
-    // request.sendPageVisit(totalTime, monitorUrl)
-    monitorUrl = null;
-    startTime = null;
-  }
 });
