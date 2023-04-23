@@ -17,6 +17,7 @@ console.log('startup background worker');
 
 let monitorUrl = null;
 let currentUrl = null;
+let tabChangeUrl = null;
 
 chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
   chrome.tabs.query({active: true, currentWindow: true}, function (tabs) {
@@ -52,4 +53,24 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
       startTime = null;
     }
   })
+});
+
+chrome.tabs.onActivated.addListener(function(activeInfo) {
+  chrome.tabs.query({active: true, currentWindow: true}, function (tabs) {
+    tabChangeUrl = parser.findBaseUrl(tabs[0].url)
+
+    if (urlsToTrack.includes(monitorUrl) && monitorUrl != null) {
+      const totalTime = Math.round((new Date() - startTime) / 1000);
+      console.log('time spend on site: ' + totalTime + ' - website: ' + monitorUrl)
+      // request.sendPageVisit(totalTime, monitorUrl)
+      startTime = null;
+      monitorUrl = null;
+    }
+  
+    if(urlsToTrack.includes(tabChangeUrl)){  
+      startTime = new Date();
+      monitorUrl = tabChangeUrl;
+      return;
+    }
+  });
 });
