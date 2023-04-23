@@ -20,6 +20,7 @@ let changeUrl = null;
 let newUrl = null;
 
 // Listen for when the user navigates to a new page
+// Events get fired after user leaves the page
 chrome.webNavigation.onCommitted.addListener((details) => {
   newUrl = parser.findBaseUrl(details.url)
 
@@ -37,15 +38,41 @@ chrome.webNavigation.onCommitted.addListener((details) => {
       startTime = new Date();
     }
     monitorUrl = newUrl;
+    // console.log('tracked url')
+    return;
   }
-
+  // console.log('not a tracked url: ' + newUrl)
 });
 
 // Listen for when the user navigates away from a tracked page
+// This should listen to when a user navigates to a non tracked page
+// Event get fired when user enters a page
 chrome.webNavigation.onCompleted.addListener((details) => {
-  // chrome.tabs.query({active: true, currentWindow: true}, tabs => {
-  //   newUrl = parser.findBaseUrl(tabs[0].url)
-  // })
+  chrome.tabs.query({active: true, currentWindow: true}, tabs => {
+    changeUrl = parser.findBaseUrl(tabs[0].url)
+  })
+
+  //stops event
+  //early return if are a good way to make checks before editing url
+  if(parser.findDomain(changeUrl) === parser.findDomain(monitorUrl) || changeUrl === null){
+    console.log('enterd if')
+    return;
+  }
+
+  if(parser.findDomain(newUrl) !== parser.findDomain(monitorUrl) && monitorUrl != null){
+    console.log('check enterd! Monitor: ' + monitorUrl + ' - newUrl: ' + newUrl)
+    // Variable needs to be changed here => other wise we don't have anything to prevent event from duplicate firing
+    monitorUrl = newUrl;
+    return;
+  }
+
+  console.log(changeUrl + ' - ' + monitorUrl)
+
+  // console.log('Navigation activated: ' + changeUrl)
+
+  if(!urlsToTrack.includes(changeUrl)){
+    console.log('url is not included in list')
+  }
 
   // if(urlsToTrack.includes(newUrl)){
   //   console.log('before if: ' + newUrl, 'monitor url: ' + monitorUrl)
