@@ -74,3 +74,11 @@ chrome.tabs.onActivated.addListener(function(activeInfo) {
     }
   });
 });
+
+chrome.windows.onFocusChanged.addListener((windowId) => {
+  if (windowId === chrome.windows.WINDOW_ID_NONE) {
+    console.log('something else selected');
+  } else {
+    console.log('window is selected again')
+  }
+});
