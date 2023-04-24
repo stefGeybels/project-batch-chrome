@@ -8,7 +8,6 @@ const urlsToTrack = [
   "https://www.facebook.com"
 ];
 
-// Define a variable to store the start time of the user's visit
 let startTime = null;
 let parser = new urlParser();
 let request = new PageVisit();
@@ -79,7 +78,6 @@ chrome.tabs.onActivated.addListener(function(activeInfo) {
       startTime = new Date();
       monitorUrl = tabChangeUrl;
     }
-    console.log('tab changed: ' + wasFocused)
     wasFocused = true;
   });
 });
@@ -104,7 +102,6 @@ chrome.windows.onFocusChanged.addListener((windowId) => {
     if(urlsToTrack.includes(currentUrl)){
       startTime = new Date();
       monitorUrl = currentUrl;
-      console.log('window focus changed: ' + monitorUrl)
     }   
   });
 });
