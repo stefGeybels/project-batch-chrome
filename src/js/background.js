@@ -44,7 +44,7 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
       if(parser.findDomain(currentUrl) !== parser.findDomain(monitorUrl)){
         const totalTime = Math.round((new Date() - startTime) / 1000);
         console.log('time spend on site: ' + totalTime + ' - website: ' + monitorUrl + ' - new search')
-        // request.sendPageVisit(totalTime, monitorUrl)
+        request.sendPageVisit(totalTime, monitorUrl)
         startTime = new Date();
       }
       monitorUrl = currentUrl;
@@ -54,7 +54,7 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
     if(urlsToTrack.includes(monitorUrl) && monitorUrl !== null){
       const totalTime = Math.round((new Date() - startTime) / 1000);
       console.log('time spend on site: ' + totalTime + ' - website: ' + monitorUrl + ' - new search (not in list)')
-
+      request.sendPageVisit(totalTime, monitorUrl)
       monitorUrl = null;
       startTime = null;
     }
@@ -68,7 +68,7 @@ chrome.tabs.onActivated.addListener(function(activeInfo) {
     if (urlsToTrack.includes(monitorUrl) && monitorUrl != null && wasFocused) {
       const totalTime = Math.round((new Date() - startTime) / 1000);
       console.log('time spend on site: ' + totalTime + ' - website: ' + monitorUrl + ' - tab changed')
-      // request.sendPageVisit(totalTime, monitorUrl)
+      request.sendPageVisit(totalTime, monitorUrl)
       startTime = null;
       monitorUrl = null;
     }
@@ -88,7 +88,7 @@ chrome.windows.onFocusChanged.addListener((windowId) => {
     if(urlsToTrack.includes(monitorUrl) && monitorUrl !== null){
       const totalTime = Math.round((new Date() - startTime) / 1000);
       console.log('time spend on site: ' + totalTime + ' - website: ' + monitorUrl + ' - window focus changed')
-      // request.sendPageVisit(totalTime, monitorUrl)
+      request.sendPageVisit(totalTime, monitorUrl)
       startTime = null;
       monitorUrl = null;
       return;
