@@ -1,13 +1,31 @@
 import React from "react";
 import AuthenticatedUser from "../../authentication/User";
+import { useEffect, useState } from "react";
+import { TrackedPlatform } from "../../helpers/trackedPlatforms";
 
 export default function Dashboard({ userData }) {
+    const [platforms, setPlatforms] = useState([])
 
     function clearStorage() {
         chrome.storage.local.remove(['user'], function() {
             window.location.reload();
         });
     }
+
+    useEffect(() => {
+            const fetchData = async () => {
+              const trackedPlatform = new TrackedPlatform();
+              try {
+                const response = await trackedPlatform.get();
+                setPlatforms(response.platforms) // Do something with the response data
+              } catch (error) {
+                console.log(error);
+              }
+            };
+        
+            fetchData();
+    }, [])
+
 
     return (
         <>
@@ -29,6 +47,11 @@ export default function Dashboard({ userData }) {
                                 <p className="text-sm font-medium text-gray-600">We are currently collecting data for,</p>
                                 <p className="text-xl font-bold text-gray-900 sm:text-2xl">{userData.getUser().email}</p>
                                 <p className="text-sm font-medium text-gray-600">{userData.getUser().company}</p>
+                                {
+                                    platforms.map((item, i) => (
+                                        <p key={i}>{item.name}</p>
+                                    ))
+                                }
                             </div>
                         </div>
                         <div className="mt-5 flex justify-center sm:mt-0">
