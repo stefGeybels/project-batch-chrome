@@ -2,11 +2,22 @@ import data from './variables.json'
 import { urlParser } from './helpers/parseUrl';
 import axios from 'axios';
 import { PageVisit } from './helpers/pageVisited';
+import { TrackedPlatform } from './helpers/trackedPlatforms';
 
-const urlsToTrack = [
-  "https://www.google.be",
-  "https://www.facebook.com"
-];
+let urlsToTrack = [];
+
+async function fetchUrls(){
+  const trackedPlatform = new TrackedPlatform();
+  try {
+    const response = await trackedPlatform.get();
+    const array = response.platforms.map(platform => (platform.platform_url))
+    urlsToTrack = array;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+fetchUrls()
 
 let startTime = null;
 let parser = new urlParser();
@@ -72,8 +83,7 @@ chrome.tabs.onActivated.addListener(function(activeInfo) {
       startTime = null;
       monitorUrl = null;
     }
-    
-    
+
     if(urlsToTrack.includes(tabChangeUrl)){  
       startTime = new Date();
       monitorUrl = tabChangeUrl;
