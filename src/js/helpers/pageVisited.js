@@ -3,6 +3,8 @@ import variableData from '../variables.json'
 import { User } from "../authentication/User"
 import { stringify } from "postcss";
 
+//TODO remove token from request
+
 export class PageVisit{
   constructor() {
     this.url = variableData.url + '/api/v1/page-visit';
@@ -31,6 +33,7 @@ export class PageVisit{
                 'Content-Type': 'application/json',
                 'Connection': 'keep-alive',
                 'Accept': '*/*',
+                'Authorization': 'Bearer ' + newUser.getToken(),
               },
               body: JSON.stringify({
                 email: newUser.getUser().email,
